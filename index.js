@@ -37,6 +37,7 @@ module.exports = function(content) {
 		else
 			throw new Error("Invalid value to config parameter attrs");
 	}
+	var getCustomLoader = config.getCustomLoader || function () {};
 	var root = config.root;
 	var links = attrParse(content, function(tag, attr) {
 		return attributes.indexOf(tag + ":" + attr) >= 0;
@@ -57,7 +58,10 @@ module.exports = function(content) {
 		do {
 			var ident = randomIdent();
 		} while(data[ident]);
-		data[ident] = link.value;
+		data[ident] = {
+			path: link.value,
+			loader: getCustomLoader(link.value, link.tag, link.attr)
+		};
 		var x = content.pop();
 		content.push(x.substr(link.start + link.length));
 		content.push(ident);
@@ -85,7 +89,9 @@ module.exports = function(content) {
 			do {
 				var ident = randomIdent();
 			} while(data[ident]);
-			data[ident] = link.value.substring(11,link.length - 3)
+			data[ident] = {
+				path: link.value.substring(11,link.length - 3)
+			};
 			content.push(x.substr(link.start + link.length));
 			content.push(ident);
 			content.push(x.substr(0, link.start));
@@ -135,7 +141,7 @@ module.exports = function(content) {
 
  	return exportsString + content.replace(/xxxHTMLLINKxxx[0-9\.]+xxx/g, function(match) {
 		if(!data[match]) return match;
-		return '" + require(' + JSON.stringify(loaderUtils.urlToRequest(data[match], root)) + ') + "';
+		return '" + require(' + JSON.stringify((data[match].loader || '') + loaderUtils.urlToRequest(data[match].path, root)) + ') + "';
 	}) + ";";
 
 }

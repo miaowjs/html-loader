@@ -169,4 +169,19 @@ describe("loader", function() {
 			'export default "<p>Hello world!</p>";'
 		);
 	});
+	it("should use getCustomLoader option", function () {
+		loader.call({
+			options: {
+				htmlLoader: {
+					getCustomLoader: function (path, tag, attr) {
+						if (tag === "img" && attr === "src" && /\.png$/.test(path)) {
+							return 'test-loader!';
+						}
+					}
+				}
+			}
+		}, 'Text <img src="image.png"><img src="~bootstrap-img"> Text').should.be.eql(
+			'module.exports = "Text <img src=\\"" + require("test-loader!./image.png") + "\\"><img src=\\"" + require("bootstrap-img") + "\\"> Text";'
+		);
+	});
 });

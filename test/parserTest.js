@@ -43,7 +43,9 @@ describe("locations", function() {
 		}).should.be.eql([{
 			start: 12,
 			length: 9,
-			value: "image.png"
+			value: "image.png",
+			tag: "img",
+			attr: "src"
 		}]);
 	});
 });

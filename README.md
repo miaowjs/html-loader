@@ -103,19 +103,19 @@ module: {
 ```
 
 The enabled rules for minimizing by default are the following ones:
- - removeComments
- - removeCommentsFromCDATA
- - removeCDATASectionsFromCDATA
- - collapseWhitespace
- - conservativeCollapse
- - removeAttributeQuotes
- - useShortDoctype
- - keepClosingSlash
- - minifyJS
- - minifyCSS
- - removeScriptTypeAttributes
- - removeStyleTypeAttributes
- 
+- removeComments
+- removeCommentsFromCDATA
+- removeCDATASectionsFromCDATA
+- collapseWhitespace
+- conservativeCollapse
+- removeAttributeQuotes
+- useShortDoctype
+- keepClosingSlash
+- minifyJS
+- minifyCSS
+- removeScriptTypeAttributes
+- removeStyleTypeAttributes
+
  The rules can be disabled using the following options in your `webpack.conf.js`
 
 ```js
@@ -196,6 +196,20 @@ There are different export formats available:
 + ```module.exports``` (default, cjs format). "Hello world" becomes ```module.exports = "Hello world";```
 + ```exports.default``` (when ```exportAsDefault``` param is set, es6to5 format). "Hello world" becomes ```exports.default = "Hello world";```
 + ```export default``` (when ```exportAsEs6Default``` param is set, es6 format). "Hello world" becomes ```export default "Hello world";```
+
+### Custom Loader
+
+You can use `getCustomLoader(path, tag, attr)` function to enable custom loader, like so:
+
+```javascript
+{
+  getCustomLoader: function (path, tag, attr) {
+    if (tag === 'link' && attr === 'href' && /\.less$/.test(path)) {
+      return 'file-loader!extract-loader!css-loader!postcss-loader!less-loader!';
+    }
+  }
+}
+```
 
 ### Advanced options
 
